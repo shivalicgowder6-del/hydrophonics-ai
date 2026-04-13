@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AI Hydroponics Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<h1 class="title">🌱 AI Hydroponics Dashboard</h1>
+
+<div class="container">
+
+  <div class="card">
+    <h2>🌡 Temperature</h2>
+    <p id="temperature">--</p>
+  </div>
+
+  <div class="card">
+    <h2>💧 Humidity</h2>
+    <p id="humidity">--</p>
+  </div>
+
+  <div class="card">
+    <h2>🧪 pH</h2>
+    <p id="ph">--</p>
+  </div>
+
+  <div class="card">
+    <h2>💡 Light</h2>
+    <p id="light">--</p>
+  </div>
+
+  <div class="card">
+    <h2>🌊 Water Temp</h2>
+    <p id="waterTemp">--</p>
+  </div>
+
+</div>
+
+<div class="box">
+  <h2>⚠ Alerts</h2>
+  <ul id="alerts"></ul>
+</div>
+
+<div class="box">
+  <h2>💡 Suggestions</h2>
+  <ul id="suggestions"></ul>
+</div>
+
+<script src="script.js"></script>
+<div class="box">
+  <h2>🤖 AI Chat Assistant</h2>
+
+  <div style="display:flex; gap:10px;">
+    <input type="text" id="chatInput" placeholder="Ask: status, alerts..." />
+    <button onclick="sendMessage()">Send</button>
+  </div>
+
+  <p id="chatResponse" style="margin-top:10px;"></p>
+</div>
+</body>
+</html>
