@@ -17,46 +17,51 @@ An AI-powered hydroponics monitoring system that analyzes sensor data, detects i
 # 🏗️ PROJECT STRUCTURE
 
 ```
-hydroponics-ai-demo/
-│
-├── backend/
-│   ├── index.js
-│   ├── alertLogic.js
-│   ├── suggestionLogic.js
-│
-├── dashboard/
-│   ├── index.html
-│   ├── style.css
-│   ├── script.js
-│
-└── README.md
+hydroponics-ai/
+├── index.html
+├── style.css
+├── script.js
+├── index.js
+├── simulator.js
+├── package.json
+├── package-lock.json
+├── README.md
 ```
 
 ---
 
-# ⚙️ BACKEND SETUP
+# ⚙️ SETUP
 
 ## 📦 Install Dependencies
 
 ```
-cd backend
-npm init -y
-npm install express cors
+cd c:\Users\shiva\OneDrive\Pictures\Documents\hydrophonics-ai\hydroponics-ai
+npm install
 ```
 
 ---
 
-## ▶️ Run Backend Server
+## ▶️ Run Backend + Dashboard
 
 ```
-node index.js
+npm start
 ```
 
-Server runs at:
+Open the dashboard at:
 
 ```
-http://localhost:3000
+http://localhost:5000
 ```
+
+---
+
+## ▶️ Run the Simulator
+
+```
+npm run simulate
+```
+
+This sends new sensor data every 3 seconds to the backend and triggers live alerts.
 
 ---
 

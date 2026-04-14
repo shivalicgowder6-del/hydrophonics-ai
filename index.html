@@ -3,61 +3,154 @@
 <head>
   <title>AI Hydroponics Dashboard</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
 
-<h1 class="title">🌱 AI Hydroponics Dashboard</h1>
-
-<div class="container">
-
-  <div class="card">
-    <h2>🌡 Temperature</h2>
-    <p id="temperature">--</p>
-  </div>
-
-  <div class="card">
-    <h2>💧 Humidity</h2>
-    <p id="humidity">--</p>
-  </div>
-
-  <div class="card">
-    <h2>🧪 pH</h2>
-    <p id="ph">--</p>
-  </div>
-
-  <div class="card">
-    <h2>💡 Light</h2>
-    <p id="light">--</p>
-  </div>
-
-  <div class="card">
-    <h2>🌊 Water Temp</h2>
-    <p id="waterTemp">--</p>
-  </div>
-
+<div class="sidebar">
+  <h2>🌱 Hydro AI</h2>
+  <ul>
+    <li class="active">Dashboard</li>
+    <li>Analytics</li>
+    <li>Alerts</li>
+    <li>Settings</li>
+  </ul>
 </div>
 
-<div class="box">
-  <h2>⚠ Alerts</h2>
-  <ul id="alerts"></ul>
+<div class="main-layout">
+  <div class="topbar">
+    <div class="search-box">
+      <input id="search" type="text" placeholder="Search insights, sensors, alerts..." />
+    </div>
+    <div class="top-actions">
+      <button class="icon-btn" id="themeBtn" onclick="toggleTheme()">🌓</button>
+      <button class="action-btn" onclick="exportReport()">Export Report</button>
+      <button class="action-btn" onclick="downloadData()">Download Data</button>
+      <div class="top-icons">
+        <span class="icon">🔔</span>
+        <span class="icon">👤</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="content-grid">
+    <div class="metric-row">
+      <div class="metric-card" id="temperatureCard">
+        <div class="metric-header">
+          <span>🌡 Temperature</span>
+          <span class="trend up" id="temperatureTrend">+0.0%</span>
+        </div>
+        <p class="metric-value" id="temperature">--</p>
+        <p class="metric-label" id="temperatureLabel">Loading</p>
+      </div>
+
+      <div class="metric-card" id="humidityCard">
+        <div class="metric-header">
+          <span>💧 Humidity</span>
+          <span class="trend up" id="humidityTrend">+0.0%</span>
+        </div>
+        <p class="metric-value" id="humidity">--</p>
+        <p class="metric-label" id="humidityLabel">Loading</p>
+      </div>
+
+      <div class="metric-card" id="phCard">
+        <div class="metric-header">
+          <span>🧪 pH</span>
+          <span class="trend up" id="phTrend">+0.0%</span>
+        </div>
+        <p class="metric-value" id="ph">--</p>
+        <p class="metric-label" id="phLabel">Loading</p>
+      </div>
+
+      <div class="metric-card" id="lightCard">
+        <div class="metric-header">
+          <span>💡 Light</span>
+          <span class="trend up" id="lightTrend">+0.0%</span>
+        </div>
+        <p class="metric-value" id="light">--</p>
+        <p class="metric-label" id="lightLabel">Loading</p>
+      </div>
+    </div>
+
+    <div class="analytics-row">
+      <div class="chart-panel">
+        <div class="panel-header">
+          <h3>Live Data Trends</h3>
+          <span>Last 1 minute</span>
+        </div>
+        <canvas id="tempChart"></canvas>
+      </div>
+
+      <div class="stats-panel">
+        <div class="stats-box">
+          <h3>Total Alerts</h3>
+          <p id="alertCount">0</p>
+        </div>
+        <div class="stats-box">
+          <h3>System Health</h3>
+          <p id="healthStatus">Loading</p>
+        </div>
+        <div class="stats-box">
+          <h3>Active Suggestions</h3>
+          <p id="suggestionCount">0</p>
+        </div>
+        <div class="donut-card">
+          <h3>Health Overview</h3>
+          <canvas id="healthChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel-grid">
+      <div class="panel card-panel">
+        <h3>Alerts</h3>
+        <div id="alerts"></div>
+      </div>
+      <div class="panel card-panel">
+        <h3>Suggestions</h3>
+        <div id="suggestions"></div>
+      </div>
+      <div class="panel card-panel">
+        <h3>Activity Feed</h3>
+        <div id="activityFeed"></div>
+      </div>
+    </div>
+
+    <div class="progress-grid">
+      <div class="progress-box">
+        <p>Temperature Status</p>
+        <div class="bar"><div class="fill" id="tempProgress"></div></div>
+      </div>
+      <div class="progress-box">
+        <p>Humidity Status</p>
+        <div class="bar"><div class="fill" id="humidityProgress"></div></div>
+      </div>
+      <div class="progress-box">
+        <p>pH Status</p>
+        <div class="bar"><div class="fill" id="phProgress"></div></div>
+      </div>
+      <div class="progress-box">
+        <p>Light Status</p>
+        <div class="bar"><div class="fill" id="lightProgress"></div></div>
+      </div>
+    </div>
+  </div>
 </div>
 
-<div class="box">
-  <h2>💡 Suggestions</h2>
-  <ul id="suggestions"></ul>
+<button class="chat-btn" onclick="toggleChat()">💬</button>
+<div class="chat-popup" id="chatPopup">
+  <div class="chat-header">
+    <span>AI Chat Assistant</span>
+    <button onclick="toggleChat()">✕</button>
+  </div>
+  <div id="messages"></div>
+  <div class="chat-controls">
+    <input type="text" id="chatInput" placeholder="Ask about system status..." />
+    <button onclick="sendMessage()">Send</button>
+  </div>
 </div>
 
 <script src="script.js"></script>
-<div class="box">
-  <h2>🤖 AI Chat Assistant</h2>
-
-  <div style="display:flex; gap:10px;">
-    <input type="text" id="chatInput" placeholder="Ask: status, alerts..." />
-    <button onclick="sendMessage()">Send</button>
-  </div>
-
-  <p id="chatResponse" style="margin-top:10px;"></p>
-</div>
 </body>
 </html>
