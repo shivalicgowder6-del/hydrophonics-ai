@@ -16,6 +16,8 @@ let previousMetrics = {
   ph: null,
   light: null
 };
+let analyticsFeed = []; // local feed fallback if server activities are empty
+
 
 function clamp(value, min, max) {
   return Math.min(Math.max(value, min), max);
@@ -136,6 +138,66 @@ function updateMetricCard(cardId, value, labelId, trendId, previous) {
   label.innerText = highWarning ? "Attention" : "Optimal";
   trendEl.innerText = formatTrend(trend);
   trendEl.className = `trend ${trend >= 0 ? "up" : "down"}`;
+}
+
+function appendAnalyticsEntry(entry) {
+  analyticsFeed.unshift(entry);
+  if (analyticsFeed.length > 20) analyticsFeed.pop();
+}
+
+function renderAlerts(alerts, containerId = "alerts") {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = "";
+  if (alerts && alerts.length) {
+    alerts.forEach(alert => {
+      const element = document.createElement("div");
+      element.className = "alert-box";
+      element.innerText = alert;
+      container.appendChild(element);
+    });
+  } else {
+    const element = document.createElement("div");
+    element.className = "alert-box";
+    element.innerText = "No active alerts. Everything is running smoothly.";
+    container.appendChild(element);
+  }
+}
+
+function renderSuggestions(suggestions, containerId = "suggestions") {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = "";
+  if (suggestions && suggestions.length) {
+    suggestions.forEach(suggestion => {
+      const element = document.createElement("div");
+      element.className = "suggestion";
+      element.innerText = suggestion;
+      container.appendChild(element);
+    });
+  }
+}
+
+function renderActivityFeed(activities, containerId = "activityFeed") {
+  const feed = document.getElementById(containerId);
+  if (!feed) return;
+  feed.innerHTML = "";
+  const activeFeed = activities && activities.length ? activities : analyticsFeed;
+
+  if (!activeFeed || activeFeed.length === 0) {
+    const item = document.createElement("div");
+    item.className = "activity-item";
+    item.innerText = "No activity recorded yet.";
+    feed.appendChild(item);
+    return;
+  }
+
+  activeFeed.slice(0, 10).forEach(entry => {
+    const item = document.createElement("div");
+    item.className = "activity-item";
+    item.innerText = entry;
+    feed.appendChild(item);
+  });
 }
 
 function updateProgressBar(id, percent) {
@@ -289,12 +351,7 @@ async function fetchData() {
     updateMetricCard("phCard", data.ph, "phLabel", "phTrend", previousMetrics.ph);
     updateMetricCard("lightCard", data.light, "lightLabel", "lightTrend", previousMetrics.light);
 
-    previousMetrics = {
-      temperature: data.temperature,
-      humidity: data.humidity,
-      ph: data.ph,
-      light: data.light
-    };
+    const oldMetrics = { ...previousMetrics };
 
     const alertCount = data.alerts?.length ?? 0;
     const suggestionCount = data.suggestions?.length ?? 0;
@@ -307,34 +364,46 @@ async function fetchData() {
     healthChart.data.datasets[0].data = [health.score, 100 - health.score];
     healthChart.update();
 
-    const alertsContainer = document.getElementById("alerts");
-    alertsContainer.innerHTML = "";
-      if (alertCount) {
-      data.alerts.forEach(alert => {
-        const element = document.createElement("div");
-        element.className = "alert-box";
-        element.innerText = alert;
-        alertsContainer.appendChild(element);
-      });
+    renderAlerts(data.alerts, "alerts");
+    renderAlerts(data.alerts, "alertsSectionList");
+    renderAlerts(data.alerts, "alertsDashboard");
+    renderSuggestions(data.suggestions, "suggestions");
+    renderSuggestions(data.suggestions, "suggestionsSectionList");
+    renderSuggestions(data.suggestions, "suggestionsDashboard");
+
+    document.getElementById("alertCountAnalytics").innerText = alertCount;
+    document.getElementById("healthStatusAnalytics").innerText = alertCount > 0 ? "Critical" : health.status;
+    document.getElementById("suggestionCountAnalytics").innerText = suggestionCount;
+
+    const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    const changeEntries = [];
+
+    if (oldMetrics.temperature === null) {
+      appendAnalyticsEntry(`📊 [${time}] Initial sensor values: ${data.temperature.toFixed(2)}°C | ${data.humidity.toFixed(2)}% | pH ${data.ph.toFixed(2)} | ${data.light.toFixed(0)} lx`);
     } else {
-      const element = document.createElement("div");
-      element.className = "alert-box";
-      element.innerText = "No active alerts. Everything is running smoothly.";
-      alertsContainer.appendChild(element);
+      if (data.temperature !== oldMetrics.temperature) {
+        changeEntries.push(`🌡️ Temperature changed from ${oldMetrics.temperature.toFixed(2)}°C to ${data.temperature.toFixed(2)}°C`);
+      }
+      if (data.humidity !== oldMetrics.humidity) {
+        changeEntries.push(`💧 Humidity changed from ${oldMetrics.humidity.toFixed(2)}% to ${data.humidity.toFixed(2)}%`);
+      }
+      if (data.ph !== oldMetrics.ph) {
+        changeEntries.push(`⚗️ pH changed from ${oldMetrics.ph.toFixed(2)} to ${data.ph.toFixed(2)}`);
+      }
+      if (data.light !== oldMetrics.light) {
+        changeEntries.push(`🌞 Light changed from ${oldMetrics.light.toFixed(0)} lx to ${data.light.toFixed(0)} lx`);
+      }
+
+      if (changeEntries.length) {
+        appendAnalyticsEntry(`📊 [${time}] New sensor update received: ${data.temperature.toFixed(2)}°C | ${data.humidity.toFixed(2)}% | pH ${data.ph.toFixed(2)} | ${data.light.toFixed(0)} lx`);
+        changeEntries.forEach(change => appendAnalyticsEntry(`🔄 [${time}] ${change}`));
+      }
     }
 
-    const suggestionsContainer = document.getElementById("suggestions");
-    suggestionsContainer.innerHTML = "";
-    if (suggestionCount) {
-      data.suggestions.forEach(suggestion => {
-        const element = document.createElement("div");
-        element.className = "suggestion";
-        element.innerText = suggestion;
-        suggestionsContainer.appendChild(element);
-      });
-    }
+    const displayActivities = Array.isArray(data.activities) && data.activities.length ? data.activities : analyticsFeed;
+    renderActivityFeed(displayActivities, "activityFeed");
+    renderActivityFeed(displayActivities, "activityFeedDashboard");
 
-    renderActivityFeed(data.activities || []);
     if (data.alerts?.length && data.alerts.length !== lastAlertCount) {
       playAlertSound();
     }
@@ -357,43 +426,15 @@ async function fetchData() {
     tempChart.data.datasets[0].data = trendHistory.map(point => point.value);
     tempChart.update();
 
-    healthChart.data.datasets[0].data = [Math.max(0, 4 - alertCount), alertCount];
-    healthChart.update();
-
     lastAlertCount = alertCount;
+    previousMetrics = {
+      temperature: data.temperature,
+      humidity: data.humidity,
+      ph: data.ph,
+      light: data.light
+    };
   } catch (err) {
     console.error("Fetch error:", err);
-  }
-}
-
-function renderActivityFeed(activities) {
-  const feed = document.getElementById("activityFeed");
-  feed.innerHTML = "";
-
-  if (!activities || activities.length === 0) {
-    const item = document.createElement("div");
-    item.className = "activity-item";
-    item.innerText = "No activity recorded yet.";
-    feed.appendChild(item);
-    return;
-  }
-
-  activities.slice(0, 6).forEach(entry => {
-    const item = document.createElement("div");
-    item.className = "activity-item";
-    item.innerText = entry;
-    feed.appendChild(item);
-  });
-}
-
-function addActivity(text) {
-  const feed = document.getElementById("activityFeed");
-  const item = document.createElement("div");
-  item.className = "activity-item";
-  item.innerText = text;
-  feed.prepend(item);
-  if (feed.childElementCount > 6) {
-    feed.removeChild(feed.lastChild);
   }
 }
 
@@ -419,8 +460,25 @@ async function sendMessage() {
   }
 }
 
+function switchSection(sectionId) {
+  document.querySelectorAll('.section-panel').forEach(section => {
+    section.classList.toggle('hidden', section.id !== sectionId);
+  });
+  document.querySelectorAll('.sidebar li').forEach(item => {
+    item.classList.toggle('active', item.dataset.section === sectionId);
+  });
+}
+
 window.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll('.sidebar li').forEach(item => {
+    item.addEventListener('click', () => {
+      const sectionId = item.dataset.section;
+      if (sectionId) switchSection(sectionId);
+    });
+  });
+
   initChart();
+  switchSection('dashboardSection');
   fetchData();
   setInterval(fetchData, 1 * 60 * 1000); // refresh live data every 1 minute
 });

@@ -234,12 +234,44 @@ body {
   gap: 20px;
 }
 
-.card-panel h3 {
-  margin-top: 0;
+.section-panel {
+  width: 100%;
 }
 
-.progress-grid {
+.hidden {
+  display: none;
+}
+
+.summary-grid {
   display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.settings-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.settings-card {
+  background: #111827;
+  border: 1px solid rgba(148,163,184,0.08);
+  border-radius: 22px;
+  padding: 24px;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.15);
+}
+
+.settings-card h3 {
+  margin-top: 0;
+  color: #94a3b8;
+}
+
+.settings-card p {
+  color: #cbd5e1;
+  margin: 10px 0 16px;
+}
+
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 20px;
 }

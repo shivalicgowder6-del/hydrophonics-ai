@@ -11,10 +11,10 @@
 <div class="sidebar">
   <h2>🌱 Hydro AI</h2>
   <ul>
-    <li class="active">Dashboard</li>
-    <li>Analytics</li>
-    <li>Alerts</li>
-    <li>Settings</li>
+    <li class="active" data-section="dashboardSection">Dashboard</li>
+    <li data-section="analyticsSection">Analytics</li>
+    <li data-section="alertsSection">Alerts</li>
+    <li data-section="settingsSection">Settings</li>
   </ul>
 </div>
 
@@ -34,107 +34,198 @@
     </div>
   </div>
 
-  <div class="content-grid">
-    <div class="metric-row">
-      <div class="metric-card" id="temperatureCard">
-        <div class="metric-header">
-          <span>🌡 Temperature</span>
-          <span class="trend up" id="temperatureTrend">+0.0%</span>
-        </div>
-        <p class="metric-value" id="temperature">--</p>
-        <p class="metric-label" id="temperatureLabel">Loading</p>
+  <div class="content-area">
+    <section id="dashboardSection" class="section-panel">
+      <div class="panel-header">
+        <h2>Dashboard</h2>
+        <span>Overview of your hydroponics system</span>
       </div>
+      <div class="content-grid">
+        <div class="metric-row">
+          <div class="metric-card" id="temperatureCard">
+            <div class="metric-header">
+              <span>🌡 Temperature</span>
+              <span class="trend up" id="temperatureTrend">+0.0%</span>
+            </div>
+            <p class="metric-value" id="temperature">--</p>
+            <p class="metric-label" id="temperatureLabel">Loading</p>
+          </div>
 
-      <div class="metric-card" id="humidityCard">
-        <div class="metric-header">
-          <span>💧 Humidity</span>
-          <span class="trend up" id="humidityTrend">+0.0%</span>
-        </div>
-        <p class="metric-value" id="humidity">--</p>
-        <p class="metric-label" id="humidityLabel">Loading</p>
-      </div>
+          <div class="metric-card" id="humidityCard">
+            <div class="metric-header">
+              <span>💧 Humidity</span>
+              <span class="trend up" id="humidityTrend">+0.0%</span>
+            </div>
+            <p class="metric-value" id="humidity">--</p>
+            <p class="metric-label" id="humidityLabel">Loading</p>
+          </div>
 
-      <div class="metric-card" id="phCard">
-        <div class="metric-header">
-          <span>🧪 pH</span>
-          <span class="trend up" id="phTrend">+0.0%</span>
-        </div>
-        <p class="metric-value" id="ph">--</p>
-        <p class="metric-label" id="phLabel">Loading</p>
-      </div>
+          <div class="metric-card" id="phCard">
+            <div class="metric-header">
+              <span>🧪 pH</span>
+              <span class="trend up" id="phTrend">+0.0%</span>
+            </div>
+            <p class="metric-value" id="ph">--</p>
+            <p class="metric-label" id="phLabel">Loading</p>
+          </div>
 
-      <div class="metric-card" id="lightCard">
-        <div class="metric-header">
-          <span>💡 Light</span>
-          <span class="trend up" id="lightTrend">+0.0%</span>
+          <div class="metric-card" id="lightCard">
+            <div class="metric-header">
+              <span>💡 Light</span>
+              <span class="trend up" id="lightTrend">+0.0%</span>
+            </div>
+            <p class="metric-value" id="light">--</p>
+            <p class="metric-label" id="lightLabel">Loading</p>
+          </div>
         </div>
-        <p class="metric-value" id="light">--</p>
-        <p class="metric-label" id="lightLabel">Loading</p>
-      </div>
-    </div>
 
-    <div class="analytics-row">
-      <div class="chart-panel">
-        <div class="panel-header">
-          <h3>Live Data Trends</h3>
-          <span>Last 1 minute</span>
+        <div class="summary-grid">
+          <div class="stats-box">
+            <h3>Total Alerts</h3>
+            <p id="alertCount">0</p>
+          </div>
+          <div class="stats-box">
+            <h3>System Health</h3>
+            <p id="healthStatus">Loading</p>
+          </div>
+          <div class="stats-box">
+            <h3>Active Suggestions</h3>
+            <p id="suggestionCount">0</p>
+          </div>
         </div>
-        <canvas id="tempChart"></canvas>
-      </div>
 
-      <div class="stats-panel">
-        <div class="stats-box">
-          <h3>Total Alerts</h3>
-          <p id="alertCount">0</p>
+        <div class="progress-grid">
+          <div class="progress-box">
+            <p>Temperature Status</p>
+            <div class="bar"><div class="fill" id="tempProgress"></div></div>
+          </div>
+          <div class="progress-box">
+            <p>Humidity Status</p>
+            <div class="bar"><div class="fill" id="humidityProgress"></div></div>
+          </div>
+          <div class="progress-box">
+            <p>pH Status</p>
+            <div class="bar"><div class="fill" id="phProgress"></div></div>
+          </div>
+          <div class="progress-box">
+            <p>Light Status</p>
+            <div class="bar"><div class="fill" id="lightProgress"></div></div>
+          </div>
         </div>
-        <div class="stats-box">
-          <h3>System Health</h3>
-          <p id="healthStatus">Loading</p>
-        </div>
-        <div class="stats-box">
-          <h3>Active Suggestions</h3>
-          <p id="suggestionCount">0</p>
-        </div>
-        <div class="donut-card">
-          <h3>Health Overview</h3>
-          <canvas id="healthChart"></canvas>
-        </div>
-      </div>
-    </div>
 
-    <div class="panel-grid">
-      <div class="panel card-panel">
-        <h3>Alerts</h3>
-        <div id="alerts"></div>
-      </div>
-      <div class="panel card-panel">
-        <h3>Suggestions</h3>
-        <div id="suggestions"></div>
-      </div>
-      <div class="panel card-panel">
-        <h3>Activity Feed</h3>
-        <div id="activityFeed"></div>
-      </div>
-    </div>
+        <div class="panel-grid">
+          <div class="panel card-panel">
+            <h3>Alerts</h3>
+            <div id="alertsDashboard"></div>
+          </div>
+          <div class="panel card-panel">
+            <h3>Suggestions</h3>
+            <div id="suggestionsDashboard"></div>
+          </div>
+          <div class="panel card-panel">
+            <h3>Activity Feed</h3>
+            <div id="activityFeedDashboard"></div>
+          </div>
+        </div>
 
-    <div class="progress-grid">
-      <div class="progress-box">
-        <p>Temperature Status</p>
-        <div class="bar"><div class="fill" id="tempProgress"></div></div>
+        <div class="settings-grid">
+          <div class="settings-card">
+            <h3>Theme</h3>
+            <p>Switch between dark and light mode.</p>
+            <button class="action-btn" onclick="toggleTheme()">Toggle Theme</button>
+          </div>
+          <div class="settings-card">
+            <h3>Refresh Interval</h3>
+            <p>Data reloads automatically every 60 seconds.</p>
+          </div>
+          <div class="settings-card">
+            <h3>Report Export</h3>
+            <p>Download the latest sensor report.</p>
+            <button class="action-btn" onclick="exportReport()">Export Report</button>
+          </div>
+        </div>
       </div>
-      <div class="progress-box">
-        <p>Humidity Status</p>
-        <div class="bar"><div class="fill" id="humidityProgress"></div></div>
+    </section>
+
+    <section id="analyticsSection" class="section-panel hidden">
+      <div class="panel-header">
+        <h2>Analytics</h2>
+        <span>Live insights, trends, and activity feed</span>
       </div>
-      <div class="progress-box">
-        <p>pH Status</p>
-        <div class="bar"><div class="fill" id="phProgress"></div></div>
+      <div class="analytics-row">
+        <div class="chart-panel">
+          <div class="panel-header">
+            <h3>Live Data Trends</h3>
+            <span>Last 1 minute</span>
+          </div>
+          <canvas id="tempChart"></canvas>
+        </div>
+        <div class="stats-panel">
+          <div class="stats-box">
+            <h3>Health Status</h3>
+            <p id="healthStatusAnalytics">Loading</p>
+          </div>
+          <div class="stats-box">
+            <h3>Total Alerts</h3>
+            <p id="alertCountAnalytics">0</p>
+          </div>
+          <div class="stats-box">
+            <h3>Suggestions</h3>
+            <p id="suggestionCountAnalytics">0</p>
+          </div>
+          <div class="donut-card">
+            <h3>Health Overview</h3>
+            <canvas id="healthChart"></canvas>
+          </div>
+        </div>
       </div>
-      <div class="progress-box">
-        <p>Light Status</p>
-        <div class="bar"><div class="fill" id="lightProgress"></div></div>
+      <div class="panel-grid">
+        <div class="panel card-panel">
+          <h3>Activity Feed</h3>
+          <div id="activityFeed"></div>
+        </div>
       </div>
-    </div>
+    </section>
+
+    <section id="alertsSection" class="section-panel hidden">
+      <div class="panel-header">
+        <h2>Alerts</h2>
+        <span>Active alerts and recommendations</span>
+      </div>
+      <div class="panel-grid">
+        <div class="panel card-panel">
+          <h3>Current Alerts</h3>
+          <div id="alertsSectionList"></div>
+        </div>
+        <div class="panel card-panel">
+          <h3>Suggestions</h3>
+          <div id="suggestionsSectionList"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="settingsSection" class="section-panel hidden">
+      <div class="panel-header">
+        <h2>Settings</h2>
+        <span>Basic preferences for the dashboard</span>
+      </div>
+      <div class="settings-grid">
+        <div class="settings-card">
+          <h3>Theme</h3>
+          <p>Switch between dark and light mode.</p>
+          <button class="action-btn" onclick="toggleTheme()">Toggle Theme</button>
+        </div>
+        <div class="settings-card">
+          <h3>Refresh Interval</h3>
+          <p>Data reloads automatically every 60 seconds.</p>
+        </div>
+        <div class="settings-card">
+          <h3>Report Export</h3>
+          <p>Download the latest sensor report.</p>
+          <button class="action-btn" onclick="exportReport()">Export Report</button>
+        </div>
+      </div>
+    </section>
   </div>
 </div>
 
